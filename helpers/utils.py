@@ -3,7 +3,7 @@ import secrets
 import time
 import pyautogui as pyg
 from .data import websites, browsers, drivers, webdriver, browser_options, Website, dub_options
-from selenium.common.exceptions import StaleElementReferenceException, NoSuchWindowException, TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchWindowException, TimeoutException, NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import urllib.parse
@@ -93,15 +93,15 @@ class WebHandler:
         read_only_query = query + dub_options[website] if dubbed else query
         actual_query = Helpers.construct(desired_website, query)
         print(actual_query)
-        wait = secrets.choice(range(5, 16))
+        wait = secrets.choice(range(3, 6))
         options.set_headless() if debug else None
         driver = driver(options=options)
         website_meta = {
             'animekisa': driver.find_elements_by_class_name,
-            'yugenanime': driver.find_elements_by_class_name,
+            'yugenanime': driver.find_elements_by_xpath,
             'crunchyroll': driver.find_elements_by_class_name,
             "9anime": driver.find_elements_by_xpath}
-        dub_button = r'btn btn-default btn-small'
+        dub_button = r"//a[contains(text(),'Dub')]"
 
         try:
             driver.set_window_size(1600, 1200)
@@ -123,8 +123,8 @@ class WebHandler:
                 return an_list
 
             def get_episode():
-                Helpers.find_and_click(driver=driver, argument=r'link p-15',
-                                    index=5, write=False)[1] if website == "yugenanime" else None
+                Helpers.find_and_click(driver=driver, argument=r"//a[@class='link p-15']",
+                                    index=3, write=False, click=False)[1].click() if website == "yugenanime" else None
                 pyg.doubleClick(x=248, y=968) if website == "9anime" else None
                 # TODO: Fix CR's retarded edge cases
                 eps = website_meta[website](desired_website.episodes)
@@ -135,7 +135,11 @@ class WebHandler:
                 else:
                     eps[-1].click() if website != 'animekisa' else eps[0].click
                 print("successfully got episode")
-                Helpers.find_and_click(dub_button, driver, 2, write=False) if website == "yugenanime" and dubbed else None
+                try:
+                    Helpers.find_and_click(dub_button, driver, 2, write=False) if website == "yugenanime" and dubbed else None
+                
+                except NoSuchElementException:
+                    pyg.confirm(text="This anime probably doesn't have a dubbed version", title='Dub Version', buttons=['OK', 'Cancel'])
                 return eps
             anime, episodes = get_anime(),  get_episode()
             driver.close() if debug else None

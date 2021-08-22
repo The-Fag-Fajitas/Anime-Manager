@@ -29,14 +29,14 @@ nine_a = Website('9anime', 'https://9anime.to', anime=r'//*[@id="body"]/div[2]/a
                  episodes='//*[@id="episodes"]/section/div[2]/ul/descendant::a', keyword='keyword',
                  search=r'/search?', login='',
                  name_or_email='', password='', has_captcha=False)
-Yugen = Website('yugenanime', 'https://yugenani.me/', anime="anime_name",
-                episodes=r'ep-title',
+Yugen = Website('yugenanime', 'https://yugenani.me/', anime=r"//div[@class='cards-grid']//descendant::span",
+                episodes=r'//ul[@class="ep-grid"]/descendant::a',
                 keyword='q', search=r'search?', login='https://yugenani.me/login/',
                 name_or_email='email', password='password', has_captcha=True)
 
 Crunchyroll = Website("crunchyroll", "https://www.crunchyroll.com/",
                       r'name',
-                      episodes=r'series-title block ellipsis',
+                      episodes=r"//ul[@class='list-of-seasons cf']//descendant::a//descendant::span",
                       keyword=r'from=&q', search=r'search?', login='https://www.crunchyroll.com/login',
                       name_or_email='login_form[name]', password='login_form[password]', has_captcha=True)
 
