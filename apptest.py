@@ -63,13 +63,15 @@ class WebTest:
         except AssertionError:
             global exception
             exception = True
-            print(f"Crawl test failed at {num2words(i,to='ordinal')} test ")
-if __name__ == "__main__":
+            print(f"Crawl test failed at {num2words(i,to='ordinal')} test")
+    
+
+def run():
     t1 = time.time()
     test = WebTest()
-    lists = test(_AK)
+    lists = test(_Yugen)
     t2 = time.time()
     dt = t2 - t1
     print("---ALL OK---") if not exception else None
     print(f"Completed {len(lists)} "
-          f"test(s) in {dt} seconds")
+        f"test(s) in {dt} seconds")
